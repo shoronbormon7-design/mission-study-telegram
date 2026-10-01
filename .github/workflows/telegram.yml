@@ -10,7 +10,18 @@ on:
       timezone: 'Asia/Dhaka'
     - cron: '0 22 * * *'
       timezone: 'Asia/Dhaka'
+
   workflow_dispatch:
+    inputs:
+      post_time:
+        description: 'Test post time'
+        required: true
+        type: choice
+        options:
+          - '05:00'
+          - '13:00'
+          - '14:00'
+          - '22:00'
 
 jobs:
   telegram:
@@ -30,7 +41,9 @@ jobs:
 
       - name: Set post time
         run: |
-          if [ "${{ github.event.schedule }}" = "0 5 * * *" ]; then
+          if [ -n "${{ inputs.post_time }}" ]; then
+            echo "POST_TIME=${{ inputs.post_time }}" >> $GITHUB_ENV
+          elif [ "${{ github.event.schedule }}" = "0 5 * * *" ]; then
             echo "POST_TIME=05:00" >> $GITHUB_ENV
           elif [ "${{ github.event.schedule }}" = "0 13 * * *" ]; then
             echo "POST_TIME=13:00" >> $GITHUB_ENV
